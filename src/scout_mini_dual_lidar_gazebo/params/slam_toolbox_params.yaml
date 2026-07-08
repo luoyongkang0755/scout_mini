@@ -1,0 +1,97 @@
+# slam_toolbox params — dual lidar with merged 360° scan
+# Strategy: LiDAR 30Hz + aggressive scan matching to correct odometry drift
+slam_toolbox:
+  ros__parameters:
+    # Plugin params
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: HUBER_LOSS
+
+    # ROS Parameters
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_link
+    transform_timeout: 0.5
+    transform_tolerance: 0.5
+    scan_topic: /merged/scan
+    scan_queue_size: 30
+    mode: mapping
+    use_scan_matching: true
+    use_scan_barycenter: true
+
+    # Keyframe / correction frequency
+    # Less frequent keyframes reduce noise/ghosting from slight misalignments
+    minimum_time_interval: 0.5
+    transform_publish_period: 0.1
+    minimum_travel_distance: 0.5
+    minimum_travel_heading: 0.5
+    max_cached_frames: 10000
+    map_update_interval: 2.0
+
+    # Odometry noise — higher = trust scan matching more, lower = trust odom more
+    # With frictionless model, odometry may slip; let SLAM correct via LiDAR
+    srr: 0.02
+    srt: 0.04
+    str: 0.02
+    stt: 0.04
+
+    # Loop closure — enabled to fix odometry drift and keep corners square
+    do_loop_closing: true
+    loop_search_maximum_distance: 8.0
+    loop_match_minimum_chain_size: 10
+    loop_match_minimum_response_coarse: 0.35
+    loop_match_minimum_response_fine: 0.45
+    loop_search_space_dimension: 8.0
+    loop_search_space_resolution: 0.05
+    loop_search_space_smear_deviation: 0.03
+    loop_closure_association_radius: 2.0
+    loop_closure_maximum_scan_distance: 10.0
+    loop_closure_minimum_scan_count: 20
+
+    # Scan matching — high precision
+    max_range: 25.0
+    minimum_score: 15.0
+    sigma: 0.02
+    kernel_size: 1
+    lstep: 0.01
+    astep: 0.01
+    iterations: 20
+    lsigma: 0.04
+    ogain: 3.0
+    lskip: 0
+    linear_update: 0.5
+    angular_update: 0.08
+    temporal_update: 1.0
+    resample_threshold: 0.5
+    particles: 30
+    correlation_search_space_dimension: 0.3
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.03
+
+    # Map range — higher occ_thresh filters single-scan noise
+    xmin: -30.0
+    xmax: 30.0
+    ymin: -30.0
+    ymax: 30.0
+    delta: 0.05
+    occ_thresh: 0.65
+    max_laser_range: 12.0
+
+    # Map Saving
+    map_resolution: 0.05
+    map_save_period: 60.0
+    map_name: map
+
+    # Interactive mode
+    debug_logging: true
+    enable_interactive_mode: true
+
+    # QoS
+    qos_overrides:
+      /merged/scan:
+        subscription:
+          reliability: best_effort
+          durability: volatile

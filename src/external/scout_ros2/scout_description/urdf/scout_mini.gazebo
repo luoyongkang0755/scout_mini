@@ -4,10 +4,11 @@
 
     <!-- ============================================================ -->
     <!-- Wheel friction: prevent slip so DiffDrive odometry matches   -->
+    <!-- Values from ugv_gazebo_sim/scout/scout_description/urdf       -->
     <!-- ============================================================ -->
     <gazebo reference="front_left_wheel_link">
-        <mu1>0.2</mu1>
-        <mu2>0.2</mu2>
+        <mu1>1.0</mu1>
+        <mu2>0.5</mu2>
         <kp>10000000.0</kp>
         <kd>1.0</kd>
         <fdir1>1 0 0</fdir1>
@@ -15,8 +16,8 @@
         <maxContacts>64</maxContacts>
     </gazebo>
     <gazebo reference="front_right_wheel_link">
-        <mu1>0.2</mu1>
-        <mu2>0.2</mu2>
+        <mu1>1.0</mu1>
+        <mu2>0.5</mu2>
         <kp>10000000.0</kp>
         <kd>1.0</kd>
         <fdir1>1 0 0</fdir1>
@@ -24,8 +25,8 @@
         <maxContacts>64</maxContacts>
     </gazebo>
     <gazebo reference="rear_left_wheel_link">
-        <mu1>0.2</mu1>
-        <mu2>0.2</mu2>
+        <mu1>1.0</mu1>
+        <mu2>0.5</mu2>
         <kp>10000000.0</kp>
         <kd>1.0</kd>
         <fdir1>1 0 0</fdir1>
@@ -33,8 +34,8 @@
         <maxContacts>64</maxContacts>
     </gazebo>
     <gazebo reference="rear_right_wheel_link">
-        <mu1>0.2</mu1>
-        <mu2>0.2</mu2>
+        <mu1>1.0</mu1>
+        <mu2>0.5</mu2>
         <kp>10000000.0</kp>
         <kd>1.0</kd>
         <fdir1>1 0 0</fdir1>
@@ -47,14 +48,14 @@
     <!-- ============================================================ -->
     <gazebo>
         <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
-            <left_joint>front_left_wheel</left_joint>
-            <left_joint>rear_left_wheel</left_joint>
-            <right_joint>front_right_wheel</right_joint>
-            <right_joint>rear_right_wheel</right_joint>
+            <left_joint>front_right_wheel</left_joint>
+            <left_joint>rear_right_wheel</left_joint>
+            <right_joint>front_left_wheel</right_joint>
+            <right_joint>rear_left_wheel</right_joint>
             <wheel_separation>${track}</wheel_separation>
-            <wheel_radius>0.16</wheel_radius>
-            <max_wheel_torque>1000.0</max_wheel_torque>
-            <max_linear_acceleration>1.0</max_linear_acceleration>
+            <wheel_radius>0.081</wheel_radius>
+            <max_wheel_torque>50</max_wheel_torque>
+            <max_linear_acceleration>3.0</max_linear_acceleration>
             <max_angular_acceleration>6.0</max_angular_acceleration>
             <topic>/cmd_vel</topic>
             <odom_topic>/odom</odom_topic>
@@ -74,6 +75,125 @@
         <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
             <topic>/joint_states</topic>
         </plugin>
+    </gazebo>
+
+    <!-- ============================================================ -->
+    <!-- IMU sensor on base_link                                      -->
+    <!-- ============================================================ -->
+    <gazebo reference="base_link">
+        <sensor name="imu_sensor" type="imu">
+            <always_on>true</always_on>
+            <update_rate>50</update_rate>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.0002</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.0002</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.0002</stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+            <topic>/imu</topic>
+        </sensor>
+    </gazebo>
+
+    <!-- ============================================================ -->
+    <!-- Front LiDAR Gazebo sensor plugin                             -->
+    <!-- ============================================================ -->
+    <gazebo reference="front_lidar_link">
+        <sensor name="front_lidar_sensor" type="gpu_ray">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>10</update_rate>
+            <always_on>true</always_on>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1.0</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.1</min>
+                    <max>25.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <topic>/front/scan</topic>
+        </sensor>
+    </gazebo>
+
+    <!-- ============================================================ -->
+    <!-- Rear LiDAR Gazebo sensor plugin                              -->
+    <!-- ============================================================ -->
+    <gazebo reference="rear_lidar_link">
+        <sensor name="rear_lidar_sensor" type="gpu_ray">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>10</update_rate>
+            <always_on>true</always_on>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1.0</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.1</min>
+                    <max>25.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <topic>/rear/scan</topic>
+        </sensor>
     </gazebo>
 
 </robot>

@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<robot name="scout_mini"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- ============================================================ -->
+    <!-- Include base chassis + wheels from URDF                       -->
+    <!-- scout_mini.urdf was generated from mini.xacro with values:    -->
+    <!--   wheelbase=0.463951  track=0.416503                         -->
+    <!--   wheel_vertical_offset=-0.100998  wheel_radius=0.08         -->
+    <!--   base 0.62 x 0.585 x 0.235                                 -->
+    <!-- ============================================================ -->
+    <xacro:include filename="$(find scout_description)/urdf/scout_mini.urdf" />
+
+    <!-- ============================================================ -->
+    <!-- Properties matching URDF values (for downstream use)          -->
+    <!-- ============================================================ -->
+    <xacro:property name="base_x_size" value="0.62" />
+    <xacro:property name="base_y_size" value="0.585" />
+    <xacro:property name="base_z_size" value="0.235" />
+    <xacro:property name="wheelbase" value="0.463951" />
+    <xacro:property name="track" value="0.416503" />
+    <xacro:property name="wheel_vertical_offset" value="-0.100998" />
+    <xacro:property name="wheel_radius" value="0.08" />
+    <xacro:property name="wheel_diameter" value="0.16" />
+
+    <!-- ============================================================ -->
+    <!-- Gazebo configuration (not in URDF)                            -->
+    <!-- ============================================================ -->
+    <xacro:include filename="$(find scout_description)/urdf/scout_mini.gazebo" />
+
+    <!-- ============================================================ -->
+    <!-- base_footprint (not in URDF)                                  -->
+    <!-- ============================================================ -->
+    <link name="base_footprint"/>
+
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${wheel_vertical_offset - wheel_radius}" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="base_footprint" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- Front LiDAR (RS-AIRY)                                        -->
+    <!-- ============================================================ -->
+    <link name="front_lidar_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.05" radius="0.04" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.1 0.1 0.1 1.0" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.05" radius="0.04" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001" />
+        </inertial>
+    </link>
+
+    <joint name="front_lidar_joint" type="fixed">
+        <origin xyz="${base_x_size/2 - 0.08} 0.0 ${base_z_size/2 - 0.03}" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="front_lidar_link" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- Rear LiDAR (RS-AIRY)                                         -->
+    <!-- ============================================================ -->
+    <link name="rear_lidar_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.05" radius="0.04" />
+            </geometry>
+            <material name="black">
+                <color rgba="0.1 0.1 0.1 1.0" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder length="0.05" radius="0.04" />
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001" />
+        </inertial>
+    </link>
+
+    <joint name="rear_lidar_joint" type="fixed">
+        <origin xyz="${-base_x_size/2 + 0.08} 0.0 ${base_z_size/2 - 0.03}" rpy="0 0 3.14159" />
+        <parent link="base_link" />
+        <child link="rear_lidar_link" />
+    </joint>
+
+</robot>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema" ?>
+<package format="3">
+  <name>scout_mini_dual_lidar_gazebo</name>
+  <version>0.1.0</version>
+  <description>Scout Mini Dual LiDAR Gazebo Simulation</description>
+
+  <maintainer email="user@example.com">User</maintainer>
+  <license>BSD</license>
+
+  <build_depend>ament_cmake</build_depend>
+  <build_depend>scout_description</build_depend>
+  <build_depend>ros_gz_sim</build_depend>
+  <build_depend>robot_state_publisher</build_depend>
+  <build_depend>rclpy</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>tf2_msgs</build_depend>
+  <build_depend>tf2_ros</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>slam_toolbox</build_depend>
+  <build_depend>nav2_map_server</build_depend>
+
+  <exec_depend>scout_description</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>ros_gz_sim</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros_gz_bridge</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

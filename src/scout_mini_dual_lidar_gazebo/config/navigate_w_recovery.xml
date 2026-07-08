@@ -1,0 +1,32 @@
+<root main_tree_to_execute="MainTree">
+  <BehaviorTree ID="MainTree">
+    <RecoveryNode number_of_retries="6" name="NavigateRecovery">
+      <PipelineSequence name="NavigateWithReplanning">
+        <RateController hz="1.0">
+          <RecoveryNode number_of_retries="1" name="ComputePathRecovery">
+            <ComputePathToPose name="ComputePathToPose"/>
+            <ClearEntireCostmap name="ClearGlobalCostmap" service_name="global_costmap/clear_entirely_global_costmap"/>
+          </RecoveryNode>
+        </RateController>
+        <RecoveryNode number_of_retries="1" name="FollowPathRecovery">
+          <FollowPath name="FollowPath"/>
+          <ClearEntireCostmap name="ClearLocalCostmap" service_name="local_costmap/clear_entirely_local_costmap"/>
+        </RecoveryNode>
+      </PipelineSequence>
+      <ReactiveFallback name="RecoveryFallback">
+        <GoalUpdated/>
+        <RoundRobin name="Recoveries">
+          <Sequence name="SpinRecovery">
+            <Spin name="Spin"/>
+            <ClearEntireCostmap name="ClearCostmapAfterSpin" service_name="local_costmap/clear_entirely_local_costmap"/>
+          </Sequence>
+          <Sequence name="BackupRecovery">
+            <BackUp name="BackUp"/>
+            <ClearEntireCostmap name="ClearCostmapAfterBackup" service_name="local_costmap/clear_entirely_local_costmap"/>
+          </Sequence>
+          <Wait wait_duration="5" name="Wait"/>
+        </RoundRobin>
+      </ReactiveFallback>
+    </RecoveryNode>
+  </BehaviorTree>
+</root>
