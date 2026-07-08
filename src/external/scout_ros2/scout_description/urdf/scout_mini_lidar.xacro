@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <!-- ============================================================ -->
+    <!-- Front LiDAR link                                            -->
+    <!-- ============================================================ -->
+    <link name="front_lidar_link">
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0.0" rpy="0 0 0" />
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.05" length="0.04" />
+            </geometry>
+            <material name="black">
+                <color rgba="0 0 0 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.05" length="0.04" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="front_lidar_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="front_lidar_link" />
+        <origin xyz="0.25 0 0.15" rpy="0 0 0" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- Rear LiDAR link                                             -->
+    <!-- ============================================================ -->
+    <link name="rear_lidar_link">
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001" />
+        </inertial>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.05" length="0.04" />
+            </geometry>
+            <material name="black">
+                <color rgba="0 0 0 1" />
+            </material>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <cylinder radius="0.05" length="0.04" />
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="rear_lidar_joint" type="fixed">
+        <parent link="base_link" />
+        <child link="rear_lidar_link" />
+        <origin xyz="-0.25 0 0.15" rpy="0 0 0" />
+    </joint>
+
+    <!-- ============================================================ -->
+    <!-- Front LiDAR Gazebo sensor (Ignition format)                  -->
+    <!-- ============================================================ -->
+    <gazebo reference="front_lidar_link">
+        <sensor name="front_lidar_sensor" type="gpu_ray">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>10</update_rate>
+            <always_on>true</always_on>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1.0</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.1</min>
+                    <max>25.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <topic>/front/scan</topic>
+        </sensor>
+    </gazebo>
+
+    <!-- ============================================================ -->
+    <!-- Rear LiDAR Gazebo sensor (Ignition format)                   -->
+    <!-- ============================================================ -->
+    <gazebo reference="rear_lidar_link">
+        <sensor name="rear_lidar_sensor" type="gpu_ray">
+            <pose>0 0 0 0 0 0</pose>
+            <visualize>false</visualize>
+            <update_rate>10</update_rate>
+            <always_on>true</always_on>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <resolution>1.0</resolution>
+                        <min_angle>-3.14159</min_angle>
+                        <max_angle>3.14159</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.1</min>
+                    <max>25.0</max>
+                    <resolution>0.01</resolution>
+                </range>
+                <noise>
+                    <type>gaussian</type>
+                    <mean>0.0</mean>
+                    <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <topic>/rear/scan</topic>
+        </sensor>
+    </gazebo>
+
+</robot>
